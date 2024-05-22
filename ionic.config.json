@@ -1,0 +1,7 @@
+{
+  "name": "Serveroo-Admin",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
