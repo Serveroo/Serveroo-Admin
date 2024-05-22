@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {User} from "../../shared/class/user/user";
 
 @Component({
   selector: 'app-home',
@@ -7,6 +8,10 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  constructor(private user: User) {
+  }
 
+  ionViewWillEnter() {
+    console.log(this.user.getUserData());
+  }
 }
