@@ -2,9 +2,13 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import {envDevExclude} from "./env.dev.exclude";
+
 export const environment = {
   production: false,
-  base: 'http://localhost:3001'
+  base: 'http://localhost:3001',
+  mail: envDevExclude.mail,
+  password: envDevExclude.password,
 };
 
 /*

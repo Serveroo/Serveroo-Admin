@@ -24,4 +24,22 @@ export class HttpService {
     }
     return this.http.post(`${this.baseLink}/api/isUserAdmin`, data, {headers});
   }
+
+  public getNamespaces() {
+    return this.http.get(`${this.baseLink}/k8s/getNamespaces`);
+  }
+
+  public getAdminInfoPods(token: string) {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    return this.http.get(`${this.baseLink}/k8s/getAdminInfoPods`, {headers});
+  }
+
+  public getAdminInfoUsers(token: string) {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    return this.http.get(`${this.baseLink}/k8s/getAdminInfoUsers`, {headers});
+  }
 }

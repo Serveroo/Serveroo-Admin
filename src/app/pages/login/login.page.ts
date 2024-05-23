@@ -7,6 +7,7 @@ import {UserModel} from "../../shared/model/user.model";
 import {Router} from "@angular/router";
 import {Display} from "../../shared/class/display/display";
 import {lastValueFrom} from "rxjs";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-login',
@@ -22,9 +23,16 @@ export class LoginPage {
     private router: Router,
     private display: Display,
   ) {
+    this.loginData.mail = environment.mail;
+    this.loginData.password = environment.password;
+    this.login();
   }
 
   login() {
+    if (!this.loginData.mail || !this.loginData.password) {
+      this.display.toast('Veuillez renseigner tous les champs').then();
+      return;
+    }
     lastValueFrom(this.httpService.login(this.loginData))
       .then((response: any) => {
         const token = response.token;
