@@ -15,6 +15,7 @@ export class UsersPage implements AfterViewInit {
 
   private animation: Animation = this.animationCtrl.create();
   public infoUsers: Array<DisplayUserModel> = new Array<DisplayUserModel>();
+  public displayUsers: Array<DisplayUserModel> = new Array<DisplayUserModel>();
   private headers: DisplayUserModel = {
     session_id: 'Session ID',
     email: 'Email',
@@ -42,10 +43,10 @@ export class UsersPage implements AfterViewInit {
   getData() {
     lastValueFrom(this.httpService.getAdminInfoUsers(this.user.getToken()))
       .then((data: any) => {
-        console.log(data);
-
         this.infoUsers = data.users;
-        this.infoUsers.unshift(this.headers);
+
+        this.displayUsers = [...this.infoUsers];
+        this.displayUsers.unshift(this.headers);
 
         this.animation.pause();
       })
@@ -59,5 +60,11 @@ export class UsersPage implements AfterViewInit {
   refreshButton() {
     this.animation.play().then();
     this.getData();
+  }
+
+  searchEvent(event: any) {
+    const query = event.target.value.toLowerCase();
+    this.displayUsers = this.infoUsers.filter((d) => Object.values(d).join().toLowerCase().indexOf(query) > -1);
+    this.displayUsers.unshift(this.headers);
   }
 }

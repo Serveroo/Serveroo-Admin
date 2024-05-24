@@ -10,33 +10,36 @@
     </ion-card-title>
   </ion-card-header>
   <ion-card-content>
-    <ion-list>
-      <ion-item *ngFor="let user of infoUsers; index as index" [class]="index > 0 ? 'mediumButton' : ''">
-        <ion-grid>
-          <ion-row>
-            <ion-col size="3">
-              <ion-label>
-                {{ user.session_id }}
-              </ion-label>
-            </ion-col>
-            <ion-col size="2">
-              <ion-label>
-                {{ user.name }}
-              </ion-label>
-            </ion-col>
-            <ion-col size="2">
-              <ion-label>
-                {{ user.firstname }}
-              </ion-label>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                {{ user.email }}
-              </ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-    </ion-list>
+    <ion-searchbar show-clear-button="focus" placeholder="Rechercher" (ionInput)="searchEvent($event)"></ion-searchbar>
   </ion-card-content>
 </ion-card>
+<ion-content class="tabContent">
+  <ion-list>
+    <ion-item *ngFor="let user of displayUsers; index as index" [class]="'listItem ' + (index > 0 ? 'mediumButton' : '')">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="3">
+            <ion-label>
+              {{ user.session_id }}
+            </ion-label>
+          </ion-col>
+          <ion-col size="2">
+            <ion-label>
+              {{ user.name }}
+            </ion-label>
+          </ion-col>
+          <ion-col size="2">
+            <ion-label>
+              {{ user.firstname }}
+            </ion-label>
+          </ion-col>
+          <ion-col size="5">
+            <ion-label>
+              {{ user.email }}
+            </ion-label>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+  </ion-list>
+</ion-content>
