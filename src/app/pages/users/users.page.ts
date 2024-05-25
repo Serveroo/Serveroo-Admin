@@ -4,6 +4,7 @@ import {HttpService} from "../../core/http/http.service";
 import {lastValueFrom} from "rxjs";
 import {Animation, AnimationController} from "@ionic/angular";
 import {DisplayUserModel} from "../../shared/model/displayuser.model";
+import {HeaderModel} from "../../shared/model/header.model";
 
 @Component({
   selector: 'app-users',
@@ -12,16 +13,37 @@ import {DisplayUserModel} from "../../shared/model/displayuser.model";
 })
 export class UsersPage implements AfterViewInit {
   @ViewChild('refreshIcon') private refreshIcon: any;
+  @ViewChild('searchbar') private searchbar: any;
 
   private animation: Animation = this.animationCtrl.create();
   public infoUsers: Array<DisplayUserModel> = new Array<DisplayUserModel>();
   public displayUsers: Array<DisplayUserModel> = new Array<DisplayUserModel>();
-  private headers: DisplayUserModel = {
-    session_id: 'Session ID',
-    email: 'Email',
-    firstname: 'Prénom',
-    name: 'Nom',
-  };
+  public headers: Array<HeaderModel> = [
+    {
+      title: 'Namespace',
+      id: 'session_id',
+      size: '3',
+      sort: 0
+    },
+    {
+      title: 'Nom',
+      id: 'name',
+      size: '2',
+      sort: 0
+    },
+    {
+      title: 'Prénom',
+      id: 'firstname',
+      size: '2',
+      sort: 0
+    },
+    {
+      title: 'Mail',
+      id: 'email',
+      size: '5',
+      sort: 0
+    },
+  ];
 
   constructor(
     private user: User,
@@ -46,7 +68,6 @@ export class UsersPage implements AfterViewInit {
         this.infoUsers = data.users;
 
         this.displayUsers = [...this.infoUsers];
-        this.displayUsers.unshift(this.headers);
 
         this.animation.pause();
       })
@@ -62,9 +83,30 @@ export class UsersPage implements AfterViewInit {
     this.getData();
   }
 
-  searchEvent(event: any) {
-    const query = event.target.value.toLowerCase();
+  searchEvent() {
+    const query = this.searchbar.value.toLowerCase();
     this.displayUsers = this.infoUsers.filter((d) => Object.values(d).join().toLowerCase().indexOf(query) > -1);
-    this.displayUsers.unshift(this.headers);
+  }
+
+  sortData(header: HeaderModel) {
+    this.searchEvent();
+    this.headers.forEach((h) => h !== header ? h.sort = 0 : null);
+    this.displayUsers.sort((a, b) => {
+      let tmpA, tmpB;
+
+      // @ts-ignore
+      tmpA = a[header.id];
+      // @ts-ignore
+      tmpB = b[header.id];
+
+      if (tmpA === tmpB) return 0;
+
+      if (header.sort === 0) {
+        return tmpA > tmpB ? 1 : -1;
+      } else {
+        return tmpA < tmpB ? header.sort : -header.sort;
+      }
+    });
+    header.sort = header.sort === 0 ? 1 : -header.sort;
   }
 }

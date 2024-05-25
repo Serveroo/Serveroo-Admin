@@ -15,6 +15,7 @@ import {HeaderModel} from "../../shared/model/header.model";
 })
 export class HomePage implements AfterViewInit {
   @ViewChild('refreshIcon') private refreshIcon: any;
+  @ViewChild('searchbar') private searchbar: any;
 
   public infoPods: Array<DisplayPodModel> = new Array<DisplayPodModel>();
   public displayPods: Array<DisplayPodModel> = new Array<DisplayPodModel>();
@@ -140,25 +141,37 @@ export class HomePage implements AfterViewInit {
   sortData(header: HeaderModel) {
     const title = header.title.toLowerCase();
 
-    this.displayPods = [...this.infoPods];
+    this.searchEvent();
     this.headers.forEach((h) => h !== header ? h.sort = 0 : null);
     this.displayPods.sort((a, b) => {
-      // @ts-ignore
-      if (a[title] === b[title]) return 0;
+      let tmpA, tmpB;
 
-      if (header.sort === 0) {
-        // @ts-ignore
-        return a[title] > b[title] ? 1 : -1;
+      if (title === 'cpu') {
+        tmpA = parseFloat(a[title].replace('%', ''));
+        tmpB = parseFloat(b[title].replace('%', ''));
+      } else if (title === 'memory' || title === 'disk') {
+        tmpA = parseFloat(a[title].split(' ')[0]);
+        tmpB = parseFloat(b[title].split(' ')[0]);
       } else {
         // @ts-ignore
-        return a[title] < b[title] ? header.sort : -header.sort;
+        tmpA = a[title];
+        // @ts-ignore
+        tmpB = b[title];
+      }
+
+      if (tmpA === tmpB) return 0;
+
+      if (header.sort === 0) {
+        return tmpA > tmpB ? 1 : -1;
+      } else {
+        return tmpA < tmpB ? header.sort : -header.sort;
       }
     });
     header.sort = header.sort === 0 ? 1 : -header.sort;
   }
 
-  searchEvent(event: any) {
-      const query = event.target.value.toLowerCase();
+  searchEvent() {
+      const query = this.searchbar.value.toLowerCase();
       this.displayPods = this.infoPods.filter((d) => Object.values(d).join().toLowerCase().indexOf(query) > -1);
   }
 }

@@ -10,7 +10,7 @@
     </ion-card-title>
   </ion-card-header>
   <ion-card-content>
-    <ion-searchbar show-clear-button="focus" placeholder="Rechercher" (ionInput)="searchEvent($event)"></ion-searchbar>
+    <ion-searchbar #searchbar show-clear-button="always" placeholder="Rechercher" (ionInput)="searchEvent()"></ion-searchbar>
   </ion-card-content>
 </ion-card>
 <ion-content class="tabContent">
