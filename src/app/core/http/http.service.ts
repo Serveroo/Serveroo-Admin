@@ -22,24 +22,20 @@ export class HttpService {
     const headers = {
       Authorization: `Bearer ${token}`
     }
-    return this.http.post(`${this.baseLink}/api/isUserAdmin`, data, {headers});
-  }
-
-  public getNamespaces() {
-    return this.http.get(`${this.baseLink}/k8s/getNamespaces`);
+    return this.http.post(`${this.baseLink}/admin/isUserAdmin`, data, {headers});
   }
 
   public getAdminInfoPods(token: string) {
     const headers = {
       Authorization: `Bearer ${token}`
     };
-    return this.http.get(`${this.baseLink}/k8s/getAdminInfoPods`, {headers});
+    return this.http.get(`${this.baseLink}/admin/getAdminInfoPods`, {headers});
   }
 
   public getAdminInfoUsers(token: string) {
     const headers = {
       Authorization: `Bearer ${token}`
     };
-    return this.http.get(`${this.baseLink}/k8s/getAdminInfoUsers`, {headers});
+    return this.http.get(`${this.baseLink}/admin/getAdminInfoUsers`, {headers});
   }
 }

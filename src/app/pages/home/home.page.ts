@@ -106,7 +106,7 @@ export class HomePage implements AfterViewInit {
           name: pod.name,
           cpu: (pod.containers[0].resourceUsage.cpu.usage * 100).toFixed(2) + '%',
           memory: this.formatBytes(pod.containers[0].resourceUsage.memory.usage),
-          disk: this.formatBytes(0),
+          disk: this.formatBytes(pod.containers[0].pv.use),
           status: pod.status,
           date: `${pod.date.day}/${pod.date.month}/${pod.date.year} ${pod.date.hour.toString().padStart(2, '0')}:${pod.date.minute.toString().padStart(2, '0')}:${pod.date.second.toString().padStart(2, '0')}`,
           endDate: pod.endDate ? `${pod.endDate.day}/${pod.endDate.month}/${pod.endDate.year} ${pod.endDate.hour.toString().padStart(2, '0')}:${pod.endDate.minute.toString().padStart(2, '0')}:${pod.endDate.second.toString().padStart(2, '0')}` : '-'
@@ -130,7 +130,7 @@ export class HomePage implements AfterViewInit {
     else if (mo >= 1)
       return mo.toFixed(2) + " Mo";
     else
-      return ko.toFixed(2) + " Ko";
+      return ko.toFixed(0) + " Ko";
   }
 
   refreshButton() {

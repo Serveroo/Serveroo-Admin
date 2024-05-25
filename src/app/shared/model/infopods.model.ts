@@ -32,7 +32,7 @@ class ResourceUsageModel {
 }
 
 class PVModel {
-  'name': string;
+  'use': number;
   'path': string;
   'capacity': number;
 }
