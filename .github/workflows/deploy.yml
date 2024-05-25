@@ -1,0 +1,45 @@
+name: Deploy to server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: ionic build --prod
+
+
+#      - name: Deploy to Server
+#        uses: easingthemes/ssh-deploy@main
+#        with:
+#          SSH_PRIVATE_KEY: ${{ secrets.KEY }}
+#          ARGS: "-rlgoDzvc -i --delete"
+#          SOURCE: wiki
+#          REMOTE_HOST: ${{ secrets.HOST }}
+#          REMOTE_USER: ${{ secrets.USERNAME }}
+#          REMOTE_PORT: ${{ secrets.PORT }}
+#          TARGET: ${{ secrets.REMOTE_TARGET }}
+#
+#      - name: executing remote ssh commands using password
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          key: ${{ secrets.KEY }}
+#          port: ${{ secrets.PORT }}
+#          script: |
+#            sudo rm -rf ${{ secrets.DEPLOYMENT_TARGET }}
+#            sudo mv ${{ secrets.REMOTE_TARGET }}/wiki ${{ secrets.DEPLOYMENT_TARGET }}
