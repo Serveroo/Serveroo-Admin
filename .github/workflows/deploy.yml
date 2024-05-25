@@ -36,5 +36,5 @@ jobs:
           TARGET: ${{ secrets.REMOTE_TARGET }}
           SCRIPT_AFTER: |
             sudo rm -rf ${{ secrets.DEPLOYMENT_TARGET }}
-            sudo mv ${{ secrets.REMOTE_TARGET }}/wiki ${{ secrets.DEPLOYMENT_TARGET }}
+            sudo mv ${{ secrets.REMOTE_TARGET }}/www ${{ secrets.DEPLOYMENT_TARGET }}
 
