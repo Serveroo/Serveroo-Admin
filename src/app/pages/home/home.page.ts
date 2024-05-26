@@ -118,7 +118,7 @@ export class HomePage implements AfterViewInit {
           name: pod.name,
           cpu: (pod.containers[0].resourceUsage.cpu.usage * 100).toFixed(2) + '%',
           memory: this.formatBytes(pod.containers[0].resourceUsage.memory.usage),
-          disk: this.formatBytes(pod.containers[0].pv.use),
+          disk: this.formatBytes(pod.containers[0].pv.use * 1024 * 1024 * 1024),
           status: pod.status,
           date: `${pod.date.day}/${pod.date.month}/${pod.date.year} ${pod.date.hour.toString().padStart(2, '0')}:${pod.date.minute.toString().padStart(2, '0')}:${pod.date.second.toString().padStart(2, '0')}`,
           lastUse: '-',
