@@ -1,0 +1,32 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>
+      {{ pod.name }}
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-label>
+      Namespace : {{ pod.namespace }}
+    </ion-label>
+    <ion-label>
+      Nom du pod : {{ pod.name }}
+    </ion-label>
+    <ion-label>
+      Date de création : {{ pod.date }}
+    </ion-label>
+    <ion-label>
+      Dernière utilisation : {{ pod.lastUse }}
+    </ion-label>
+    <ion-label>
+      <ng-container *ngIf="pod.openPorts.length === 0">
+        Aucun port ouvert
+      </ng-container>
+      <ng-container *ngIf="pod.openPorts.length > 0">
+        Port{{ pod.openPorts.length > 1 ? 's' : '' }} ouvert{{ pod.openPorts.length > 1 ? 's' : '' }} :
+        <ng-container *ngFor="let port of pod.openPorts; let i = index">
+          {{ port.name }}, {{ port.port }}, {{ port.nodePort }} {{ i < pod.openPorts.length - 1 ? '/ ' : '' }}
+        </ng-container>
+      </ng-container>
+    </ion-label>
+  </ion-card-content>
+</ion-card>

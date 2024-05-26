@@ -9,5 +9,6 @@ export class DisplayPodModel {
   'status': string;
   'date': string;
   'lastUse': string;
-  'openPorts': Array<OpenPortModel>
+  'openPorts': Array<OpenPortModel>;
+  'displayDetails': boolean;
 }

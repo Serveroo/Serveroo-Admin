@@ -19,7 +19,7 @@ export class HttpService {
     return this.http.post(`${this.baseLink}/api/connect`, data);
   }
 
-  public isUserAdmin(data: {mail: string}, token: string) {
+  public isUserAdmin(data: { mail: string }, token: string) {
     const headers = {
       Authorization: `Bearer ${token}`
     }

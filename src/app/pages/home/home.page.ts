@@ -122,7 +122,8 @@ export class HomePage implements AfterViewInit {
           status: pod.status,
           date: `${pod.date.day}/${pod.date.month}/${pod.date.year} ${pod.date.hour.toString().padStart(2, '0')}:${pod.date.minute.toString().padStart(2, '0')}:${pod.date.second.toString().padStart(2, '0')}`,
           lastUse: '-',
-          openPorts: pod.openPorts
+          openPorts: pod.openPorts,
+          displayDetails: false
         });
       }
     }
@@ -170,6 +171,15 @@ export class HomePage implements AfterViewInit {
     this.getData();
   }
 
+  handleClickItem(pod: DisplayPodModel) {
+    pod.displayDetails = !pod.displayDetails;
+  }
+
+  searchEvent() {
+    const query = this.searchbar.value.toLowerCase();
+    this.displayPods = this.infoPods.filter((d) => Object.values(d).join().toLowerCase().indexOf(query) > -1);
+  }
+
   sortData(header: HeaderModel) {
     this.searchEvent();
     this.headers.forEach((h) => h !== header ? h.sort = 0 : null);
@@ -198,11 +208,6 @@ export class HomePage implements AfterViewInit {
       }
     });
     header.sort = header.sort === 0 ? 1 : -header.sort;
-  }
-
-  searchEvent() {
-    const query = this.searchbar.value.toLowerCase();
-    this.displayPods = this.infoPods.filter((d) => Object.values(d).join().toLowerCase().indexOf(query) > -1);
   }
 
   onClickDeletePod(event: any,pod: DisplayPodModel) {
