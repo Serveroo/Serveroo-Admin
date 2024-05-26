@@ -205,7 +205,10 @@ export class HomePage implements AfterViewInit {
     this.displayPods = this.infoPods.filter((d) => Object.values(d).join().toLowerCase().indexOf(query) > -1);
   }
 
-  onClickDeletePod(pod: DisplayPodModel) {
+  onClickDeletePod(event: any,pod: DisplayPodModel) {
+    if (event.detail.role !== 'confirm')
+      return;
+
     if (environment.stripe_subscription_enabled) {
       // on récupère d'abord la facture pour en obtenir l'id
       lastValueFrom(this.httpService.getInvoice(pod.name, this.user.getToken()))

@@ -10,7 +10,8 @@
     </ion-card-title>
   </ion-card-header>
   <ion-card-content>
-    <ion-searchbar #searchbar show-clear-button="always" placeholder="Rechercher" (ionInput)="searchEvent()"></ion-searchbar>
+    <ion-searchbar #searchbar show-clear-button="always" placeholder="Rechercher"
+                   (ionInput)="searchEvent()"></ion-searchbar>
   </ion-card-content>
 </ion-card>
 <ion-content class="tabContent">
@@ -21,7 +22,9 @@
           <ion-col *ngFor="let header of headers" [size]="header.size">
             <ion-button fill="clear" color="dark" expand="full" class="buttonHeader" (click)="sortData(header)">
               {{ header.title }}
-              <ion-icon *ngIf="header.sort !== 0" slot="end" [name]="'chevron-' + (header.sort < 0 ? 'up' : 'down') + '-outline'" name="chevron-down-outline"></ion-icon>
+              <ion-icon *ngIf="header.sort !== 0" slot="end"
+                        [name]="'chevron-' + (header.sort < 0 ? 'up' : 'down') + '-outline'"
+                        name="chevron-down-outline"></ion-icon>
             </ion-button>
           </ion-col>
         </ion-row>
@@ -71,9 +74,18 @@
             </ion-label>
           </ion-col>
           <ion-col size="1">
-            <ion-button fill="clear" color="danger" expand="full" class="buttonHeader" (click)="onClickDeletePod(pod)">
+            <ion-button [id]="pod.name" fill="clear" color="danger" expand="full" class="buttonHeader">
               <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
             </ion-button>
+            <ion-alert
+              [trigger]="pod.name"
+              header="Suppression"
+              message="Voulez-vous vraiment supprimer ce pod ?"
+              [buttons]="[{text: 'Annuler', role: 'cancel'},
+                {text: 'Supprimer',role: 'confirm'}]"
+              (didDismiss)="onClickDeletePod($event, pod)">
+            >
+            </ion-alert>
           </ion-col>
         </ion-row>
       </ion-grid>
