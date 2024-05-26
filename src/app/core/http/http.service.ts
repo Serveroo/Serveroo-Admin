@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {LoginModel} from "../../shared/model/login.model";
+import {OpenPortModel} from "../../shared/model/infopods.model";
 
 @Injectable({
   providedIn: 'root'
@@ -58,5 +59,12 @@ export class HttpService {
       Authorization: `Bearer ${token}`
     };
     return this.http.post(`${this.baseLink}/k8s/deleteCollection`, {appName: podName, namespace}, {headers});
+  }
+
+  public getLastUse(openPorts: Array<number>, token: string) {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    return this.http.post(`${this.baseLink}/admin/getLastUseOfPod`, openPorts, {headers});
   }
 }

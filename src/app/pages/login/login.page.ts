@@ -25,7 +25,8 @@ export class LoginPage {
   ) {
     this.loginData.mail = environment.mail;
     this.loginData.password = environment.password;
-    this.login();
+    if (this.loginData.mail != '' && this.loginData.password != '')
+      this.login();
   }
 
   login() {

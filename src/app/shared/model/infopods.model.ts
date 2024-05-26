@@ -11,7 +11,7 @@ class DateModel {
   'year': number;
 }
 
-class OpenPortModel {
+export class OpenPortModel {
   'name': string;
   'port': number;
   'nodePort': number;

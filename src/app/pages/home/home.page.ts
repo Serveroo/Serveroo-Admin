@@ -98,6 +98,7 @@ export class HomePage implements AfterViewInit {
       .then(async (data: any) => {
         this.headers.forEach((h) => h.sort = 0);
         this.formatData(data);
+        this.getLastUse();
 
         this.animation.pause();
       })
@@ -120,7 +121,8 @@ export class HomePage implements AfterViewInit {
           disk: this.formatBytes(pod.containers[0].pv.use),
           status: pod.status,
           date: `${pod.date.day}/${pod.date.month}/${pod.date.year} ${pod.date.hour.toString().padStart(2, '0')}:${pod.date.minute.toString().padStart(2, '0')}:${pod.date.second.toString().padStart(2, '0')}`,
-          lastUse: '-'
+          lastUse: '-',
+          openPorts: pod.openPorts
         });
       }
     }
@@ -142,6 +144,25 @@ export class HomePage implements AfterViewInit {
       return mo.toFixed(2) + " Mo";
     else
       return ko.toFixed(0) + " Ko";
+  }
+
+  getLastUse() {
+    this.infoPods.forEach((pod) => {
+      const nodePorts = pod.openPorts.map((p) => p.nodePort);
+      lastValueFrom(this.httpService.getLastUse(nodePorts, this.user.getToken()))
+        .then((res: any) => {
+          if (res.lastUse === -1)
+            pod.lastUse = '-';
+          else {
+            const date = new Date(res.lastUse * 1000);
+            pod.lastUse = date.toLocaleString();
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          pod.lastUse = '-';
+        });
+    });
   }
 
   refreshButton() {

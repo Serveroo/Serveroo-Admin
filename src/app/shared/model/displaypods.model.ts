@@ -1,3 +1,5 @@
+import {OpenPortModel} from "./infopods.model";
+
 export class DisplayPodModel {
   'namespace': string;
   'name': string;
@@ -7,4 +9,5 @@ export class DisplayPodModel {
   'status': string;
   'date': string;
   'lastUse': string;
+  'openPorts': Array<OpenPortModel>
 }
