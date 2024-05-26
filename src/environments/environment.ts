@@ -9,6 +9,8 @@ export const environment = {
   base: 'http://localhost:3001',
   mail: envDevExclude.mail,
   password: envDevExclude.password,
+  stripe_api_key: envDevExclude.stripe_api_key,
+  stripe_subscription_enabled: false,
 };
 
 /*

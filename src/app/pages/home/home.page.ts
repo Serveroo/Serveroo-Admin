@@ -7,6 +7,8 @@ import {Animation, AnimationController} from '@ionic/angular';
 import {InfopodsModel} from "../../shared/model/infopods.model";
 import {DisplayPodModel} from "../../shared/model/displaypods.model";
 import {HeaderModel} from "../../shared/model/header.model";
+import {StripeAPI} from "../../shared/class/stripe/stripe";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-home',
@@ -22,42 +24,50 @@ export class HomePage implements AfterViewInit {
   public headers: Array<HeaderModel> = [
     {
       title: 'Namespace',
+      id: 'namespace',
       size: '2',
       sort: 0
     },
     {
-      title: 'Name',
+      title: 'Nom',
+      id: 'name',
       size: '2',
       sort: 0
     },
     {
       title: 'CPU',
+      id: 'cpu',
       size: '1',
       sort: 0
     },
     {
-      title: 'Memory',
+      title: 'Mémoire',
+      id: 'memory',
       size: '1',
       sort: 0
     },
     {
-      title: 'Disk',
+      title: 'Disque',
+      id: 'disk',
       size: '1',
       sort: 0
     },
     {
       title: 'Status',
+      id: 'status',
       size: '1',
       sort: 0
     },
     {
-      title: 'Date',
+      title: 'Date de création',
+      id: 'date',
       size: '2',
       sort: 0
     },
     {
-      title: 'End Date',
-      size: '2',
+      title: 'Last Use',
+      id: 'lastUse',
+      size: '1',
       sort: 0
     }
   ];
@@ -68,6 +78,7 @@ export class HomePage implements AfterViewInit {
     private httpService: HttpService,
     private display: Display,
     private animationCtrl: AnimationController,
+    private stripe: StripeAPI
   ) {
   }
 
@@ -109,7 +120,7 @@ export class HomePage implements AfterViewInit {
           disk: this.formatBytes(pod.containers[0].pv.use),
           status: pod.status,
           date: `${pod.date.day}/${pod.date.month}/${pod.date.year} ${pod.date.hour.toString().padStart(2, '0')}:${pod.date.minute.toString().padStart(2, '0')}:${pod.date.second.toString().padStart(2, '0')}`,
-          endDate: pod.endDate ? `${pod.endDate.day}/${pod.endDate.month}/${pod.endDate.year} ${pod.endDate.hour.toString().padStart(2, '0')}:${pod.endDate.minute.toString().padStart(2, '0')}:${pod.endDate.second.toString().padStart(2, '0')}` : '-'
+          lastUse: '-'
         });
       }
     }
@@ -139,19 +150,17 @@ export class HomePage implements AfterViewInit {
   }
 
   sortData(header: HeaderModel) {
-    const title = header.title.toLowerCase();
-
     this.searchEvent();
     this.headers.forEach((h) => h !== header ? h.sort = 0 : null);
     this.displayPods.sort((a, b) => {
       let tmpA, tmpB;
 
-      if (title === 'cpu') {
-        tmpA = parseFloat(a[title].replace('%', ''));
-        tmpB = parseFloat(b[title].replace('%', ''));
-      } else if (title === 'memory' || title === 'disk') {
-        tmpA = parseFloat(a[title].split(' ')[0]);
-        tmpB = parseFloat(b[title].split(' ')[0]);
+      if (header.id === 'cpu') {
+        tmpA = parseFloat(a[header.id].replace('%', ''));
+        tmpB = parseFloat(b[header.id].replace('%', ''));
+      } else if (header.id === 'memory' || header.id === 'disk') {
+        tmpA = parseFloat(a[header.id].split(' ')[0]);
+        tmpB = parseFloat(b[header.id].split(' ')[0]);
       } else {
         // @ts-ignore
         tmpA = a[title];
@@ -171,7 +180,69 @@ export class HomePage implements AfterViewInit {
   }
 
   searchEvent() {
-      const query = this.searchbar.value.toLowerCase();
-      this.displayPods = this.infoPods.filter((d) => Object.values(d).join().toLowerCase().indexOf(query) > -1);
+    const query = this.searchbar.value.toLowerCase();
+    this.displayPods = this.infoPods.filter((d) => Object.values(d).join().toLowerCase().indexOf(query) > -1);
+  }
+
+  onClickDeletePod(pod: DisplayPodModel) {
+    if (environment.stripe_subscription_enabled) {
+      // on récupère d'abord la facture pour en obtenir l'id
+      lastValueFrom(this.httpService.getInvoice(pod.name, this.user.getToken()))
+        .then((res: any) => {
+          const idInvoice = res.invoice.id_invoice;
+          // afin de récupérer l'utilisateur stipe, on a besoin de récupérer le mail associé au namespace
+          lastValueFrom(this.httpService.getMailFromNamespace(pod.namespace, this.user.getToken()))
+            .then((data: any) => {
+              // on récupère ensuite le client stripe et notamment son id
+              this.stripe.getListCustomersWithMail(data.mail)
+                .then((customer) => {
+                  const idCustomer = customer.data[0].id;
+                  // à partir de cet id, on peut récupérer la facture stripe
+                  this.stripe.getInvoice(idInvoice)
+                    .then(invoice => {
+                      // on vérifie d'abord que le client stripe est bien le propriétaire de la facture
+                      // puis si la facture est liée à un abonnement, on l'annule avant de supprimer le pod
+                      // sinon on peut supprimer le pod directement
+                      if (invoice.customer === idCustomer) {
+                        const idSubscription = invoice.subscription?.toString();
+                        if (!idSubscription) {
+                          this.deletePod(pod);
+                        } else {
+                          this.display.toast('Un abonnement en cours, suppression pas encore implémenté').then();
+                          // TODO : Cancel subscription
+                        }
+                      }
+                    })
+                })
+                .catch((err) => {
+                  console.error(err);
+                  this.display.toast('Erreur lors de la récupération du client stripe').then();
+                });
+            })
+            .catch(err => {
+              if (err.status === 406)
+                this.deletePod(pod);
+              if (err.status === 401)
+                this.display.toast('Vous ne possédez pas les droits pour supprimer ce pod').then();
+            });
+        })
+        .catch(err => {
+          console.error(err);
+          this.display.toast('Erreur lors de la récupération de la facture').then();
+        });
+    } else {
+      this.deletePod(pod);
+    }
+  }
+
+  deletePod(pod: DisplayPodModel) {
+    lastValueFrom(this.httpService.deletePod(pod.name, pod.namespace, this.user.getToken()))
+      .then((res) => {
+        this.display.toast({code: 'Pod supprimé', color: 'success'}).then();
+        this.getData();
+      })
+      .catch((err) => {
+        this.display.toast('Erreur lors de la suppression du pod').then();
+      });
   }
 }

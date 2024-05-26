@@ -70,3 +70,4 @@ testem.log
 Thumbs.db
 
 src/environments/env.dev.exclude.ts
+src/environments/env.prod.exclude.ts

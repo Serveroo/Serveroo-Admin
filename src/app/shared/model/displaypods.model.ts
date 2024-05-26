@@ -6,5 +6,5 @@ export class DisplayPodModel {
   'disk': string;
   'status': string;
   'date': string;
-  'endDate': string;
+  'lastUse': string;
 }

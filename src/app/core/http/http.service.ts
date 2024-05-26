@@ -38,4 +38,25 @@ export class HttpService {
     };
     return this.http.get(`${this.baseLink}/admin/getAdminInfoUsers`, {headers});
   }
+
+  public getInvoice(podName: string, token: string) {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    return this.http.post(`${this.baseLink}/api/getInvoice`, podName, {headers});
+  }
+
+  public getMailFromNamespace(namespace: string, token: string) {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    return this.http.post(`${this.baseLink}/admin/getMailFromNamespace`, namespace, {headers});
+  }
+
+  public deletePod(podName: string, namespace: string, token: string) {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    return this.http.post(`${this.baseLink}/k8s/deleteCollection`, {appName: podName, namespace}, {headers});
+  }
 }
