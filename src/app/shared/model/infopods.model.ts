@@ -2,7 +2,7 @@ class ConnectionDataModel {
   'nodeIP': string;
 }
 
-class DateModel {
+export class DateModel {
   'hour': number;
   'minute': number;
   'second': number;

@@ -1,14 +1,15 @@
-import {AfterContentInit, AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {User} from "../../shared/class/user/user";
 import {HttpService} from "../../core/http/http.service";
 import {lastValueFrom} from "rxjs";
 import {Display} from "../../shared/class/display/display";
 import {Animation, AnimationController} from '@ionic/angular';
-import {InfopodsModel} from "../../shared/model/infopods.model";
+import {DateModel, InfopodsModel} from "../../shared/model/infopods.model";
 import {DisplayPodModel} from "../../shared/model/displaypods.model";
 import {HeaderModel} from "../../shared/model/header.model";
 import {StripeAPI} from "../../shared/class/stripe/stripe";
 import {environment} from "../../../environments/environment";
+import {convertNodeSourceSpanToLoc} from "@angular-eslint/template-parser/dist/convert-source-span-to-loc";
 
 @Component({
   selector: 'app-home',
@@ -59,8 +60,8 @@ export class HomePage implements AfterViewInit {
       sort: 0
     },
     {
-      title: 'Date de fin',
-      id: 'endDate',
+      title: 'Date de création',
+      id: 'date',
       size: '2',
       sort: 0
     },
@@ -113,6 +114,7 @@ export class HomePage implements AfterViewInit {
     this.infoPods = [];
     for (let namespace of data) {
       for (let pod of namespace.pods) {
+        console.log(pod.date.toLocaleString());
         this.infoPods.push({
           namespace: namespace.namespace,
           name: pod.name,
@@ -120,14 +122,15 @@ export class HomePage implements AfterViewInit {
           memory: this.formatBytes(pod.containers[0].resourceUsage.memory.usage),
           disk: this.formatBytes(pod.containers[0].pv.use * 1024 * 1024 * 1024),
           status: pod.status,
-          date: `${pod.date.day}/${pod.date.month}/${pod.date.year} ${pod.date.hour.toString().padStart(2, '0')}:${pod.date.minute.toString().padStart(2, '0')}:${pod.date.second.toString().padStart(2, '0')}`,
-          endDate: pod.endDate ? `${pod.endDate.day}/${pod.endDate.month}/${pod.endDate.year} ${pod.endDate.hour.toString().padStart(2, '0')}:${pod.endDate.minute.toString().padStart(2, '0')}:${pod.endDate.second.toString().padStart(2, '0')}` : '-',
+          date: this.modelDateToString(pod.date),
+          endDate: this.modelDateToString(pod.endDate),
           lastUse: '-',
           openPorts: pod.openPorts,
           displayDetails: false
         });
       }
     }
+
 
     this.displayPods = [...this.infoPods];
   }
@@ -193,6 +196,11 @@ export class HomePage implements AfterViewInit {
       } else if (header.id === 'memory' || header.id === 'disk') {
         tmpA = parseFloat(a[header.id].split(' ')[0]);
         tmpB = parseFloat(b[header.id].split(' ')[0]);
+      } else if (header.id === 'date' || header.id === 'endDate' || header.id === 'lastUse') {
+        console.log(this.stringToDate(a[header.id]), this.stringToDate(b[header.id]));
+        tmpA = this.stringToDate(a[header.id]);
+        tmpB = this.stringToDate(b[header.id]);
+        console.log(tmpA, tmpB);
       } else {
         // @ts-ignore
         tmpA = a[header.id];
@@ -209,6 +217,33 @@ export class HomePage implements AfterViewInit {
       }
     });
     header.sort = header.sort === 0 ? 1 : -header.sort;
+  }
+
+  modelDateToDate(date: DateModel) {
+    return new Date(date.year, date.month, date.day, date.hour, date.minute, date.second);
+  }
+
+  modelDateToString(date: DateModel) {
+    if (!date)
+      return '-';
+    return this.modelDateToDate(date).toLocaleString();
+  }
+
+  stringToDate(date: string) {
+    if (date === '-')
+      return new Date(0);
+    const dateSplit = date.split(' ');
+    const dateSplit2 = dateSplit[0].split('/');
+    const timeSplit = dateSplit[1].split(':');
+
+    return new Date(
+      parseInt(dateSplit2[2]),
+      parseInt(dateSplit2[1]) - 1,
+      parseInt(dateSplit2[0]),
+      parseInt(timeSplit[0]),
+      parseInt(timeSplit[1]),
+      parseInt(timeSplit[2])
+    );
   }
 
   onClickDeletePod(event: any,pod: DisplayPodModel) {
