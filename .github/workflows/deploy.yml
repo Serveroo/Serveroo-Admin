@@ -21,11 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
-        run: ionic build --prod
-
       - name: Add env files prod
         run: echo "${{ secrets.ENVPROD }}" > src/environments/env.prod.exclude.ts
+
+      - name: Build
+        run: ionic build --prod
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
