@@ -51,6 +51,7 @@ class PodsModel {
   'type': string;
   'status': string;
   'date': DateModel;
+  'endDate': DateModel;
   'lastUse': DateModel;
   'connectionData': ConnectionDataModel;
   'openPorts': Array<OpenPortModel>;

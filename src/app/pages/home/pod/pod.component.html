@@ -18,6 +18,9 @@
       Dernière utilisation : {{ pod.lastUse }}
     </ion-label>
     <ion-label>
+      Date de fin : {{ pod.endDate }}
+    </ion-label>
+    <ion-label>
       <ng-container *ngIf="pod.openPorts.length === 0">
         Aucun port ouvert
       </ng-container>
