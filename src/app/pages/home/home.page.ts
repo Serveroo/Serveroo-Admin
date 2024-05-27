@@ -195,9 +195,9 @@ export class HomePage implements AfterViewInit {
         tmpB = parseFloat(b[header.id].split(' ')[0]);
       } else {
         // @ts-ignore
-        tmpA = a[title];
+        tmpA = a[header.id];
         // @ts-ignore
-        tmpB = b[title];
+        tmpB = b[header.id];
       }
 
       if (tmpA === tmpB) return 0;
