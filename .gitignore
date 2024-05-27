@@ -69,5 +69,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-#src/environments/env.dev.exclude.ts
-#src/environments/env.prod.exclude.ts
+src/environments/env.dev.exclude.ts
+src/environments/env.prod.exclude.ts
