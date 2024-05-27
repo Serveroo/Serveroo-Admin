@@ -114,7 +114,6 @@ export class HomePage implements AfterViewInit {
     this.infoPods = [];
     for (let namespace of data) {
       for (let pod of namespace.pods) {
-        console.log(pod.date.toLocaleString());
         this.infoPods.push({
           namespace: namespace.namespace,
           name: pod.name,
@@ -197,10 +196,8 @@ export class HomePage implements AfterViewInit {
         tmpA = parseFloat(a[header.id].split(' ')[0]);
         tmpB = parseFloat(b[header.id].split(' ')[0]);
       } else if (header.id === 'date' || header.id === 'endDate' || header.id === 'lastUse') {
-        console.log(this.stringToDate(a[header.id]), this.stringToDate(b[header.id]));
         tmpA = this.stringToDate(a[header.id]);
         tmpB = this.stringToDate(b[header.id]);
-        console.log(tmpA, tmpB);
       } else {
         // @ts-ignore
         tmpA = a[header.id];

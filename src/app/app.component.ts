@@ -15,7 +15,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.user.getUserData());
     if (!this.user.getUserData().name)
       this.router.navigate(['/login']).then();
   }
