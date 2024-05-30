@@ -72,7 +72,7 @@ export class HomePage implements AfterViewInit {
       sort: 0
     }
   ];
-  private animation: Animation = this.animationCtrl.create();
+  public animation: Animation = this.animationCtrl.create();
 
   constructor(
     private user: User,

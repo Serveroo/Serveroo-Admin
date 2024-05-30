@@ -30,6 +30,9 @@
         </ion-row>
       </ion-grid>
     </ion-item>
+    <div id="progressBar" *ngIf="animation.isRunning()">
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    </div>
     <ion-item *ngFor="let pod of displayPods; index as index" class="listItem mediumButton">
       <ion-grid>
         <ion-row>
@@ -98,6 +101,11 @@
           <app-pod class="cardItem" [pod]="pod"></app-pod>
         </ion-row>
       </ion-grid>
+    </ion-item>
+    <ion-item *ngIf="displayPods.length === 0 && !animation.isRunning()" class="listItem" lines="none">
+      <ion-label class="ion-text-center" color="medium">
+        Aucun pod trouvé
+      </ion-label>
     </ion-item>
   </ion-list>
 </ion-content>
